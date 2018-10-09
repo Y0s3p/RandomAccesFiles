@@ -69,6 +69,8 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
         jLabel10 = new javax.swing.JLabel();
         MatriculaBuscarTF = new javax.swing.JTextField();
         BuscarBT = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        NotaBuscarLB = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         RefrescarBT = new javax.swing.JButton();
@@ -201,6 +203,11 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
 
         ModiBT.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
         ModiBT.setText("Modificar");
+        ModiBT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ModiBTActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -252,6 +259,16 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
 
         BuscarBT.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
         BuscarBT.setText("Buscar");
+        BuscarBT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BuscarBTActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        jLabel11.setText("Nota");
+
+        NotaBuscarLB.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -260,15 +277,21 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(BuscarBT))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(MatriculaBuscarTF, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BuscarBT)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(MatriculaBuscarTF, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                    .addComponent(NotaBuscarLB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -280,7 +303,11 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(MatriculaBuscarTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(NotaBuscarLB, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(BuscarBT)
                 .addContainerGap())
         );
@@ -383,7 +410,7 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
     }//GEN-LAST:event_AltaBTActionPerformed
 
     private void RefrescarBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefrescarBTActionPerformed
-        // TODO add your handling code here:
+        
         model.setRowCount(0);
         
     }//GEN-LAST:event_RefrescarBTActionPerformed
@@ -429,6 +456,89 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
         }
         
     }//GEN-LAST:event_BajaBTActionPerformed
+
+    private void ModiBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModiBTActionPerformed
+        try {
+            // TODO add your handling code here:
+
+            fichero = new RandomAccessFile(f, "rw");
+            
+            matricula = Integer.parseInt(MatriculaModiTF.getText());
+            nota = Float.parseFloat(NotaModiTF.getText());
+            int operacion;
+            
+            if(nota < 0 || nota > 10){
+                JOptionPane.showMessageDialog(rootPane, "La nota es incorrecta");
+            }
+            
+            if(buscarMatricula(matricula) && matricula != 0){
+                
+                operacion = JOptionPane.showConfirmDialog(null, "Seguro que desea modificar ?","",JOptionPane.YES_NO_OPTION);
+                    
+                if(operacion == JOptionPane.YES_OPTION){
+                        
+                    fichero.seek(fichero.getFilePointer());
+                    fichero.writeFloat(nota);
+                    fichero.seek(fichero.getFilePointer()-4);
+                    fichero.writeFloat(matricula);
+                        
+                }
+             
+            mostrarDatos();  
+
+            fichero.close();
+            
+            }else{
+                
+                JOptionPane.showMessageDialog(rootPane, "El alumno existe y no ha sido borrado");
+                
+            }
+            
+            
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error al dar de baja");;
+        } catch (IOException ex) {
+            System.out.println("Error al buscar al alumno");;
+        }
+            
+        
+        
+    }//GEN-LAST:event_ModiBTActionPerformed
+
+    private void BuscarBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarBTActionPerformed
+        try {
+                
+            NotaBuscarLB.setText("");
+            
+            fichero = new RandomAccessFile(f, "rw");
+            
+            matricula = Integer.parseInt(MatriculaBuscarTF.getText());
+            
+            fichero.seek(0);
+
+            while(fichero.getFilePointer() < fichero.length()){
+
+                int datoMatricula = fichero.readInt();
+                
+                if(datoMatricula == matricula){
+                    
+                    nota = fichero.readFloat();
+                    
+                }
+  
+            }
+
+            NotaBuscarLB.setText(Float.toString(nota));
+
+            fichero.close();
+
+        } catch (FileNotFoundException e) {
+                System.out.println("No se han encontrado datos");
+        } catch (IOException ex) {
+            System.out.println("Error al buscar");;
+        }
+
+    }//GEN-LAST:event_BuscarBTActionPerformed
 
     /**
      *
@@ -527,10 +637,12 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
     private javax.swing.JTextField MatriculaModiTF;
     private javax.swing.JButton ModiBT;
     private javax.swing.JTextField NotaAltaTF;
+    private javax.swing.JLabel NotaBuscarLB;
     private javax.swing.JTextField NotaModiTF;
     private javax.swing.JButton RefrescarBT;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
