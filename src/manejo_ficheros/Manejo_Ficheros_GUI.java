@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -19,8 +20,8 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
 
 
     private int matricula;
-    private int nota;
-    private DefaultTableModel model;
+    private float nota;
+    DefaultTableModel model;
     File f;
     RandomAccessFile fichero;
     
@@ -28,10 +29,11 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
      * Creates new form Manejo_Ficheros_GUI
      * @throws java.io.FileNotFoundException
      */
-    public Manejo_Ficheros_GUI() throws FileNotFoundException {
+    public Manejo_Ficheros_GUI() throws FileNotFoundException {        
         this.f = new File("D:\\Projects\\NetBeans\\ManejoFicheros\\Manejo_Ficheros\\src\\manejo_ficheros\\Alumnos.txt");
-        this.fichero = new RandomAccessFile(f, "rw");
         initComponents();
+        this.model = (DefaultTableModel) jTable1.getModel();
+        
     }
 
     /**
@@ -148,6 +150,11 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
 
         BajaBT.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
         BajaBT.setText("Baja");
+        BajaBT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BajaBTActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -283,7 +290,7 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
 
             },
             new String [] {
-                "N.Matricula", "Nota"
+                "Matricula", "Nota"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -344,30 +351,33 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
     private void AltaBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AltaBTActionPerformed
         try {
             // TODO add your handling code here:
+            fichero = new RandomAccessFile(f, "rw");
             
             matricula = Integer.parseInt(MatriculaAltaTF.getText());
-            nota = Integer.parseInt(NotaAltaTF.getText());
-            
+            nota = Float.parseFloat(NotaAltaTF.getText());
+
             if(nota < 0 || nota > 10){
-                JOptionPane.showInputDialog("Nota incorrecta");
+                JOptionPane.showMessageDialog(rootPane, "La nota es incorrecta");
             }
-            
-            if(fichero.length() == 0){                           
-                fichero.seek(0);
+
+            if(buscarMatricula(matricula)){
+                
+                JOptionPane.showMessageDialog(rootPane, "La matricula ya existe");
+                
             }else{
-                fichero.seek(fichero.length()); 
+                
+                fichero.seek(fichero.length());
+                
+                fichero.writeInt(matricula);
+                fichero.writeFloat(nota);
             }
             
-            if(buscarMatricula(matricula)) JOptionPane.showInputDialog("La matricula ya existe");
-            else{
-                fichero.writeInt(matricula);
-                fichero.writeInt(nota);
-            }
-       
-            //model.addRow(new Object[]{fichero.readInt(),fichero.readInt()});  
+            mostrarDatos();  
+
+            fichero.close();
             
         } catch (IOException ex) {
-            Logger.getLogger(Manejo_Ficheros_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error al dar el alta");
         }
         
     }//GEN-LAST:event_AltaBTActionPerformed
@@ -377,6 +387,48 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
         model.setRowCount(0);
         
     }//GEN-LAST:event_RefrescarBTActionPerformed
+
+    private void BajaBTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BajaBTActionPerformed
+        
+        try {
+            // TODO add your handling code here:
+
+            fichero = new RandomAccessFile(f, "rw");
+            
+            matricula = Integer.parseInt(MatriculaBajaTF.getText());
+            int operacion;
+            
+            fichero.seek(0);
+            
+            try {
+                if(buscarMatricula(matricula)){
+                    
+                    operacion = JOptionPane.showConfirmDialog(null, "Seguro que desea dar de baja ?","",JOptionPane.YES_NO_OPTION);
+                    if(operacion == JOptionPane.YES_OPTION){
+                        
+                        fichero.seek(fichero.getFilePointer()-4);
+                        fichero.writeInt(0);
+                        
+                    }
+                    
+                mostrarDatos();  
+
+                fichero.close();   
+                    
+                }else{   
+                    JOptionPane.showMessageDialog(rootPane, "La matricula no existe");
+                }
+            } catch (IOException ex) {
+                System.out.println("Error al dar de baja");;
+            }
+            
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error al dar de baja");
+        } catch (IOException ex) {
+            System.out.println("Error !");
+        }
+        
+    }//GEN-LAST:event_BajaBTActionPerformed
 
     /**
      *
@@ -400,6 +452,31 @@ public class Manejo_Ficheros_GUI extends javax.swing.JFrame{
         return false;
         
     }
+    
+    private void mostrarDatos() throws IOException{
+		
+		model.setRowCount(0);
+                
+		try {
+                    
+                    fichero.seek(0);
+
+                    while(fichero.getFilePointer() < fichero.length()){
+
+                        int datoMatricula = fichero.readInt();
+                        float datoNota = fichero.readFloat();
+
+                            model.addRow(new Object[]{datoMatricula,datoNota});
+                    }
+			
+                        
+                    fichero.close();
+                    
+		} catch (FileNotFoundException e) {
+			System.out.println("No se han encontrado datos");
+		}
+		
+	}
     
     /**
      * @param args the command line arguments
